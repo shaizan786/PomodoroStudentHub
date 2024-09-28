@@ -1,14 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
-import java.util.ArrayList;
+import java.lang.Exception;
 
-public class PomodoroTimer {
+public class PomodoroTimer extends JFrame {
     private int workMinutes = 60;
     private int breakMinutes = 5;
 
@@ -25,6 +23,9 @@ public class PomodoroTimer {
     private final JTextField breakMinutesField;
 
     public PomodoroTimer() {
+
+        // Initialize the quizResults map
+        // Track chapter -> [correct answers, total questions]
         frame = new JFrame("Pomodoro Timer");
         frame.setSize(400, 250);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -262,7 +263,7 @@ public class PomodoroTimer {
             {"Which method is used to start a thread in Java?", "start()", "run()", "begin()", "init()", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html"},
             {"What is the difference between 'start()' and 'run()' methods in Java?", "'start()' creates a new thread and calls 'run()', 'run()' executes in the current thread", "'start()' executes in the current thread, 'run()' creates a new thread", "Both create a new thread", "Both execute in the current thread", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/runthread.html"},
             {"What is synchronization in Java?", "A mechanism to control the access of multiple threads to shared resources", "A mechanism to create multiple threads", "A mechanism to stop threads", "A mechanism to start threads", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/sync.html"},
-            {"Which keyword is used to synchronize a method in Java?", "synchronized", "synchronize", "sync", "synch", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html"},
+            {"Which keyword is used to synchronize a method in Java?", "synchronized", "synchronize", "sync", "syncs", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/syncmeth.html"},
             {"What is a deadlock in Java?", "A situation where two or more threads are blocked forever, waiting for each other", "A situation where a thread is running", "A situation where a thread is stopped", "A situation where a thread is waiting", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/deadlock.html"},
             {"What is the purpose of the 'wait()' method in Java?", "To make the current thread wait until another thread invokes 'notify()' or 'notifyAll()'", "To start a thread", "To stop a thread", "To run a thread", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html"},
             {"What is the purpose of the 'notify()' method in Java?", "To wake up a single thread that is waiting on the object's monitor", "To start a thread", "To stop a thread", "To run a thread", "1", "https://docs.oracle.com/javase/tutorial/essential/concurrency/guardmeth.html"},
@@ -291,19 +292,26 @@ public class PomodoroTimer {
             {"What is the purpose of the JTree class?", "To create a tree structure", "To create a table", "To create a list", "To create a menu", "1", "https://docs.oracle.com/javase/tutorial/uiswing/components/tree.html"},
             {"Which method is used to add a node to a JTree?", "addNode(DefaultMutableTreeNode node)", "insertNode(DefaultMutableTreeNode node)", "putNode(DefaultMutableTreeNode node)", "appendNode(DefaultMutableTreeNode node)", "1", "https://docs.oracle.com/javase/tutorial/uiswing/components/tree.html"}
     };
+    private final Map<Integer, String[][]> chapterQuestions = new HashMap<>() {{
+        put(1, chapter1Questions);
+        put(2, chapter2Questions);
+        put(3, chapter3Questions);
+        put(4, chapter4Questions);
+        put(5, chapter5Questions);
+        put(6, chapter6Questions);
+    }};
 
     private void showQuiz() {
-        String[][] selectedQuizQuestions = switch (selectedChapter) {
-            case 1 -> chapter1Questions;
-            case 2 -> chapter2Questions;
-            case 3 -> chapter3Questions;
-            case 4 -> chapter4Questions;
-            case 5 -> chapter5Questions;
-            case 6 -> chapter6Questions;
-            default -> chapter1Questions;
-        };
+        // Ensure the selected chapter is valid
+        if (!chapterQuestions.containsKey(selectedChapter)) {
+            JOptionPane.showMessageDialog(frame, "Invalid chapter selected. Please choose a valid chapter.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit method if invalid chapter
+        }
 
-        // Shuffle the questions
+        // Fetch the questions for the selected chapter
+        String[][] selectedQuizQuestions = chapterQuestions.get(selectedChapter);
+
+        // Shuffle the questions (optional)
         List<String[]> questionList = new ArrayList<>(Arrays.asList(selectedQuizQuestions));
         Collections.shuffle(questionList);
         selectedQuizQuestions = questionList.toArray(new String[0][]);
@@ -311,10 +319,26 @@ public class PomodoroTimer {
         int correctAnswers = 0;
         for (String[] questionData : selectedQuizQuestions) {
             String question = questionData[0];
+
+            // Ensure there are exactly four options
+            if (questionData.length < 6) {
+                JOptionPane.showMessageDialog(frame, "Question data is incomplete: " + question, "Error", JOptionPane.ERROR_MESSAGE);
+                continue; // Skip this question
+            }
+
+            // Fetch options and correct answer index
             String[] options = {questionData[1], questionData[2], questionData[3], questionData[4]};
             int correctAnswer = Integer.parseInt(questionData[5]);
-            String referenceURL = questionData.length > 6 ? questionData[6] : null; // Check for the URL
 
+            // Ensure the correct answer index is valid
+            if (correctAnswer < 0 || correctAnswer >= options.length) {
+                JOptionPane.showMessageDialog(frame, "Incorrect answer index for question: " + question, "Error", JOptionPane.ERROR_MESSAGE);
+                continue; // Skip this question
+            }
+
+            String referenceURL = questionData.length > 6 ? questionData[6] : null; // Check if URL exists
+
+            // Show the quiz question and capture user response
             String userAnswer = (String) JOptionPane.showInputDialog(
                     frame,
                     question,
@@ -327,29 +351,27 @@ public class PomodoroTimer {
 
             if (userAnswer == null) {
                 JOptionPane.showMessageDialog(frame, "Quiz skipped.");
-                break;
+                break; // Exit the quiz loop if user skips
             } else {
                 int selectedAnswerIndex = Arrays.asList(options).indexOf(userAnswer);
                 if (selectedAnswerIndex == correctAnswer) {
                     JOptionPane.showMessageDialog(frame, "Correct!");
-                    correctAnswers++; // Increment correct answers
+                    correctAnswers++;
                 } else {
                     showWrongAnswerDialog(options[correctAnswer], referenceURL);
                 }
             }
         }
 
-        // Show final score dialog
-        int totalQuestions = selectedQuizQuestions.length;
+        // Show final score
         JOptionPane.showMessageDialog(
                 frame,
-                "Quiz completed! You scored " + correctAnswers + " out of " + totalQuestions + ".",
+                "Quiz completed! You scored " + correctAnswers + " out of " + selectedQuizQuestions.length + ".",
                 "Final Score",
                 JOptionPane.INFORMATION_MESSAGE
         );
-
-        startTimer();
     }
+
 
     private void showWrongAnswerDialog(String correctAnswer, String referenceURL) {
         // Create a panel with a message and a button to open the link
@@ -381,9 +403,5 @@ public class PomodoroTimer {
             JOptionPane.showMessageDialog(frame, "Failed to open the link.", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(PomodoroTimer::new);
     }
 }
