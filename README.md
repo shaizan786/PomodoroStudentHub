@@ -1,26 +1,38 @@
-# PomodoroStudentHub
+# Pomodoro Student Hub
 
-## Overview
+> **Abstract** : The Pomodoro Technique involves  working in focused sprints followed by  short breaks. Each work session is  called a Pomodoro. This method helps  to maintain concentration and reduces  mental fatigue, ultimately leading to  improved productivity and better time
+management.
 
-PomodoroStudentHub is an app built with Java that aims to boost efficiency and facilitate learning using the Pomodoro method. It offers a timer that can be tailored to ones preferences along with a login system and a range of multiple choice questions (MCQs) that users can choose from based on their preferences. The Pomodoro technique assists individuals in managing their time efficiently while the MCQs deliver immediate feedback to reinforce knowledge retention.
+### Project Members
+1. SONDE SAJJAN SHAHID  [ Team Leader ] 
+2. PANDEY SUSHANT ASHOK 
+3. SINGH PRATIK PRAMOD 
+4. KUBAL PRANAY DINESH 
 
-## Features
+### Project Guides
+1. PROF. MOHD ASHFAQUE SHAIKH  [ Primary Guide ] 
 
-- **User Login**
+### Deployment Steps
+Please follow the below steps to run this project.
+1. Step 1 here
+2. Step 2 here
+3. Step 3 here
+3. and so on...
 
-- **Pomodoro Timer**:
+### Subject Details
+- Class : SE (COMP) Div B - 2024-2025
+- Subject : Mini Project – 1 A  (MP-1(2019)(P))
+- Project Type : Mini Project
 
-- Users can enter their own preferred work and break durations (measured in minutes).
-- A timer is available to monitor work periods and break intervals.
+### Platform, Libraries and Frameworks used
+1. [NodeJS](https://nodejs.org)
+2. [ExpressJS](https://expressjs.org)
+3. [TensorFlow](https://tensorflowjs.com)
 
-- **Multiple-Choice Questions (MCQs)**:
+### Dataset Used
+1. [Kaggle Dataset 1](https://kaggle.com/dataset1)
+2. [Kaggle Dataset 2](https://kaggle.com/dataset2)
 
-- Users have the option to choose specific chapters for answering multiple choice questions.
-- Instant feedback is provided on responses with information on correct answers and additional resources for further study.
-
-## Technologies Used
-
-- **Programming Language**: Java
-
-- **Dev Setup**: Use any Java supporting IDE like IntelliJ IDEA or Eclipse.
-- **No additional frameworks or databases** are utilized.
+### References
+- [https://kaggle.com/dataset1](https://kaggle.com/dataset1)
+- [https://kaggle.com/dataset1](https://kaggle.com/dataset1)
